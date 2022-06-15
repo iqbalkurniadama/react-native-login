@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef, useContext } from "react";
 import {
   Text,
   View,
@@ -6,32 +6,70 @@ import {
   Button,
   TouchableOpacity,
   StyleSheet,
+  Animated,
 } from "react-native";
 import { Style } from "../assets/style/Style";
+import App from "../../App";
 
-const Login = () => {
+const Login = ({ authContext }) => {
   const [data, setData] = useState([]);
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
   const [message, setMessage] = useState();
-  const [showMessage, setshowMessage] = useState("none");
+  // const [showMessage, setshowMessage] = useState("none");
 
-  // useEffect(() => {
-  //   getData();
-  // }, []);
+  const { signIn } = useContext(authContext);
+
+  const fadeAnim = useRef(new Animated.Value(0)).current;
+  const animasi = (num) => {
+    Animated.timing(fadeAnim, {
+      toValue: num,
+      duration: 3000,
+    }).start();
+  };
 
   // http://192.168.56.1:3000/login
-  const getData = () => {
+  // cara animasi 1
+  // const getData = () => {
+  //   fetch(
+  //     "http://192.168.56.1:3000/login?email=" + email + "&password=" + password
+  //   )
+  //     .then((response) => response.json())
+  //     .then((json) => {
+  //       setMessage("gagal");
+  //       // setshowMessage("none");
+  //       setshowMessage("flex");
+  //       if (json.length > 0) {
+  //         setMessage("anda berhasil");
+  //       }
+  //       setData(json);
+  //       console.log(json);
+  //     })
+  //     .catch((err) => {
+  //       console.log(err.message);
+  //     });
+  // };
+
+  // cara animasi 2
+  const getData = (data) => {
     fetch(
       "http://192.168.56.1:3000/login?email=" + email + "&password=" + password
     )
       .then((response) => response.json())
       .then((json) => {
+        animasi(1);
         setMessage("gagal");
+        setTimeout(() => {
+          animasi(0);
+        }, 3000);
         // setshowMessage("none");
-        setshowMessage("flex");
+        // setshowMessage("flex");
         if (json.length > 0) {
+          // navigation.navigate("HomeScreen");
           setMessage("anda berhasil");
+          signIn({
+            id: json[0]["id"],
+          });
         }
         setData(json);
         console.log(json);
@@ -41,23 +79,12 @@ const Login = () => {
       });
   };
 
-  const postData = () => {
-    fetch("http://192.168.56.1:3000/login", {
-      method: "POST",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        email: email,
-        password: password,
-      }),
-    });
-  };
-
   return (
     <View style={Style.container}>
-      <Text style={Style.text(showMessage)}>{message}</Text>
+      {/* <Text style={Style.text(showMessage)}>{message}</Text> */}
+      <Animated.View style={{ ...Style.text, opacity: fadeAnim }}>
+        <Text>{message}</Text>
+      </Animated.View>
       <View style={Style.wrapper}>
         <TextInput
           style={Style.input}
@@ -82,34 +109,12 @@ const Login = () => {
 
       <View style={{ flexDirection: "row", marginTop: 20 }}>
         <Text>apakah anda mempunyai akun?</Text>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={() => navigation.navigate("Register")}>
           <Text style={Style.link}> Register</Text>
         </TouchableOpacity>
       </View>
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  wrapper: {
-    width: "80%",
-  },
-  input: {
-    height: 40,
-    marginBottom: 12,
-    borderWidth: 1,
-    borderColor: "#bbb",
-    borderRadius: 5,
-    paddingHorizontal: 14,
-  },
-  link: {
-    color: "blue",
-  },
-});
 
 export default Login;

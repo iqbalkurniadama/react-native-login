@@ -21,13 +21,23 @@ const Style = StyleSheet.create({
   link: {
     color: "blue",
   },
-  text: (display) => ({
+  // text: (display) => ({
+  //   marginBottom: 150,
+  //   borderWidth: 1,
+  //   padding: 20,
+  //   borderRadius: 10,
+  //   width: "80%",
+  //   display: display,
+  // }),
+  text: {
     marginBottom: 150,
     borderWidth: 1,
     padding: 20,
     borderRadius: 10,
     width: "80%",
-    display: display,
+  },
+  animatedv2: (animatedValue) => ({
+    transform: animatedValue.getTranslateTransform(),
   }),
 });
 

@@ -1,10 +1,11 @@
-import React from "react";
-import { Text, View } from "react-native";
+import React, { useContext } from "react";
+import { Text, View, Button } from "react-native";
 
-const HomeScreen = () => {
+const HomeScreen = ({ authContext }) => {
+  const { signOut } = useContext(authContext);
   return (
     <View>
-      <Text>Home</Text>
+      <Button title="signOut" onPress={() => signOut()} />
     </View>
   );
 };
